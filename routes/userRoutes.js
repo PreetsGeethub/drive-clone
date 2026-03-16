@@ -1,6 +1,29 @@
-const {Router} = require('express');
+const { Router } = require("express");
 const userRoutes = Router();
 
-exports.userRoutes.get('/sign-up',(req,res)=>{
-    res.render()
-})
+const { createUserController } = require("../controllers/userController");
+const passport = require("passport");
+
+// Render signup page
+userRoutes.get("/signup", (req, res) => {
+  res.render("signup", { errors: [] });
+});
+
+// Handle signup form submission
+userRoutes.post("/signup", createUserController);
+
+// Render login page
+userRoutes.get("/login", (req, res) => {
+  res.render("login", { errors: [] });
+});
+
+// Handle login
+userRoutes.post(
+  "/login",
+  passport.authenticate("local", {
+    successRedirect: "/dashboard",
+    failureRedirect: "/login"
+  })
+);
+
+module.exports = userRoutes;
