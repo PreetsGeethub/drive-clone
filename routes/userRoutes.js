@@ -4,6 +4,7 @@ const userRoutes = Router();
 const { createUserController } = require("../controllers/userController");
 const passport = require("passport");
 
+const {isAuthenticated} = require("../middlewares/authMiddleware")
 // Render signup page
 userRoutes.get("/signup", (req, res) => {
   res.render("signup", { errors: [] });
@@ -26,4 +27,16 @@ userRoutes.post(
   })
 );
 
+
+userRoutes.get("/dashboard", isAuthenticated, (req, res) => {
+  res.render("dashboard", { user: req.user });
+});
+
+
+userRoutes.get("/logout", (req, res, next) => {
+  req.logout(function(err) {
+    if (err) { return next(err); }
+    res.redirect("/login");
+  });
+});
 module.exports = userRoutes;
