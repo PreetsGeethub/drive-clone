@@ -2,15 +2,121 @@
 <html>
 <head>
   <title>Dashboard</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      padding: 20px;
+    }
+
+    .folder {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 10px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    input {
+      padding: 5px;
+    }
+
+    button {
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+    .error {
+      color: red;
+    }
+  </style>
 </head>
 
 <body>
 
-<h1>Welcome to your Dashboard</h1>
+<h1>Dashboard</h1>
 
-<p>Hello <%= user.firstName %> 👋</p>
+<p>Welcome <strong><%= user.firstName %></strong> 👋</p>
 
 <a href="/logout">Logout</a>
+
+<hr>
+
+<!-- 🔴 Errors -->
+<% if (errors && errors.length > 0) { %>
+  <div class="error">
+    <ul>
+      <% errors.forEach(err => { %>
+        <li><%= err.msg %></li>
+      <% }) %>
+    </ul>
+  </div>
+<% } %>
+
+<!-- 📁 Create Folder -->
+<h2>Create Folder</h2>
+
+<form action="/folders" method="POST">
+  <input type="text" name="name" placeholder="Folder name" required>
+  <button type="submit">Create</button>
+</form>
+
+<hr>
+
+<!-- 📂 Folder List -->
+<h2>Your Folders</h2>
+
+<% if (folders && folders.length > 0) { %>
+
+  <% folders.forEach(folder => { %>
+
+    <div class="folder">
+
+      <!-- Folder Name -->
+      <a href="/folders/<%= folder.id %>">
+        📁 <%= folder.name %>
+      </a>
+
+      <div class="actions">
+
+        <!-- ✏️ Rename -->
+        <form action="/folders/rename" method="POST">
+          <input type="hidden" name="id" value="<%= folder.id %>">
+
+          <input 
+            type="text" 
+            name="name" 
+            value="<%= folder.name %>" 
+            required
+          >
+
+          <button type="submit">Rename</button>
+        </form>
+
+        <!-- 🗑 Delete -->
+        <form action="/folders/delete" method="POST">
+          <input type="hidden" name="id" value="<%= folder.id %>">
+
+          <button type="submit">Delete</button>
+        </form>
+
+      </div>
+
+    </div>
+
+  <% }) %>
+
+<% } else { %>
+
+  <p>No folders yet 📂</p>
+
+<% } %>
 
 </body>
 </html>

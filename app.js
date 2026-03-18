@@ -5,6 +5,8 @@ const path = require("node:path");
 const app = express();
 
 const userRoutes = require("./routes/userRoutes");
+const folderRoutes = require("./routes/folderRoutes")
+
 const sessionMiddleware = require("./config/session");
 const passport = require("passport");
 
@@ -40,5 +42,6 @@ app.get("/test", (req, res) => {
 });
 
 app.use(userRoutes);
+app.use(folderRoutes);
 
 module.exports = app;
