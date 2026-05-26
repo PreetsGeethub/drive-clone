@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>Quick Send Success</title>
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      font-family: Arial, sans-serif;
+
+      background: #0f172a;
+      color: white;
+    }
+
+    .container {
+      width: 420px;
+
+      background: #1e293b;
+
+      padding: 40px;
+
+      border-radius: 18px;
+
+      text-align: center;
+
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      font-size: 32px;
+    }
+
+    p {
+      color: #cbd5e1;
+    }
+
+    .code-box {
+      margin-top: 30px;
+
+      background: #334155;
+
+      padding: 20px;
+
+      border-radius: 12px;
+    }
+
+    .code {
+      font-size: 42px;
+      font-weight: bold;
+      letter-spacing: 5px;
+
+      margin-top: 10px;
+    }
+
+    .link-box {
+      margin-top: 30px;
+
+      background: #334155;
+
+      padding: 15px;
+
+      border-radius: 12px;
+
+      word-break: break-all;
+    }
+
+    a {
+      color: #818cf8;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .note {
+      margin-top: 25px;
+
+      font-size: 14px;
+
+      color: #94a3b8;
+    }
+
+    .home-link {
+      margin-top: 25px;
+      display: inline-block;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>✅ File Ready</h1>
+
+    <p>
+      Share this code with your other device
+    </p>
+
+    <div class="code-box">
+
+      <p>Your Access Code</p>
+
+      <div class="code">
+        <%= code %>
+      </div>
+
+    </div>
+
+    <div class="link-box">
+
+      <p>Quick Access Link</p>
+
+      <a href="/quick-send/<%= code %>">
+        /quick-send/<%= code %>
+      </a>
+
+    </div>
+
+    <div class="note">
+      This code expires in 10 minutes
+    </div>
+
+    <a class="home-link" href="/quick-send">
+      Send Another File
+    </a>
+
+  </div>
+
+</body>
+</html>

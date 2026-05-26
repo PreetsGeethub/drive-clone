@@ -1,7 +1,6 @@
 const { createFolder, getFolderById,showFolders, renameFolder, deleteFolder } = require("../controllers/folderController");
 const { Router } = require("express");
 const { isAuthenticated } = require("../middlewares/authMiddleware");
-
 const folderRoutes = Router();
 
 // Show folders (dashboard)

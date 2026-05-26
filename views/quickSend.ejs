@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>Quick Send</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+    }
+
+    .container {
+      background: #1e293b;
+      padding: 40px;
+      border-radius: 16px;
+      width: 400px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      font-size: 32px;
+    }
+
+    p {
+      color: #cbd5e1;
+      margin-bottom: 30px;
+    }
+
+    input[type="file"] {
+      margin-bottom: 20px;
+      color: white;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: #6366f1;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #4f46e5;
+    }
+
+    .enter-code {
+      margin-top: 25px;
+    }
+
+    .enter-code a {
+      color: #818cf8;
+      text-decoration: none;
+    }
+
+    .enter-code a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>⚡ Quick Send</h1>
+
+    <p>
+      Instantly transfer files between devices
+    </p>
+
+    <form
+      action="/quick-send"
+      method="POST"
+      enctype="multipart/form-data"
+    >
+
+      <input
+        type="file"
+        name="file"
+        required
+      >
+
+      <button type="submit">
+        Upload & Generate Code
+      </button>
+
+    </form>
+
+    <div class="enter-code">
+      <a href="/enter-code">
+        Already have a code?
+      </a>
+    </div>
+
+  </div>
+
+</body>
+</html>

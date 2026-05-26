@@ -7,6 +7,8 @@ const app = express();
 const userRoutes = require("./routes/userRoutes");
 const folderRoutes = require("./routes/folderRoutes")
 const fileRoutes = require("./routes/fileRoutes");
+const shareRoutes = require("./routes/shareRoutes");
+const quickSendRoutes = require("./routes/quickSendRoutes");
 
 const sessionMiddleware = require("./config/session");
 const passport = require("passport");
@@ -45,5 +47,7 @@ app.get("/test", (req, res) => {
 app.use(userRoutes);
 app.use(folderRoutes);
 app.use(fileRoutes);
+app.use(shareRoutes);
+app.use(quickSendRoutes);
 
 module.exports = app;
