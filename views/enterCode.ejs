@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Enter Code</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: #1e293b;
+
+      padding: 40px;
+
+      border-radius: 16px;
+
+      width: 400px;
+
+      text-align: center;
+    }
+
+    input {
+      width: 100%;
+
+      padding: 12px;
+
+      margin-bottom: 20px;
+
+      border-radius: 8px;
+
+      border: none;
+
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+
+      padding: 12px;
+
+      border: none;
+
+      border-radius: 8px;
+
+      background: #6366f1;
+
+      color: white;
+
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>Enter Access Code</h1>
+
+  <form action="/enter-code" method="POST">
+
+    <input
+      type="text"
+      name="code"
+      placeholder="Enter 6 digit code"
+      required
+    >
+
+    <button type="submit">
+      Open File
+    </button>
+
+  </form>
+
+</div>
+
+</body>
+</html>

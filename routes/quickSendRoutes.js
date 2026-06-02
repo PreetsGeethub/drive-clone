@@ -26,4 +26,12 @@ router.get(
   accessQuickSend
 );
 
+router.get("/enter-code", (req, res) => {
+  res.render("enterCode");
+});
+router.post("/enter-code", (req, res) => {
+  const { code } = req.body;
+
+  res.redirect(`/quick-send/${code}`);
+});
 module.exports = router;

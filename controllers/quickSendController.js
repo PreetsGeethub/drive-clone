@@ -1,6 +1,8 @@
 const fs = require("fs");
 const { prisma } = require("../prismaClient");
 const supabase = require("../lib/supabaseClient");
+const QRCode = require("qrcode");
+
 
 const createQuickSend = async (req, res) => {
   try {
@@ -25,6 +27,7 @@ const createQuickSend = async (req, res) => {
       console.error(error);
       return res.send("Error uploading to Supabase");
     }
+    fs.unlinkSync(file.path);
 
     // 4️⃣ Get public URL
     const { data: publicUrlData } = supabase.storage
@@ -37,6 +40,7 @@ const createQuickSend = async (req, res) => {
     const code = Math.floor(
       100000 + Math.random() * 900000
     ).toString();
+
 
     // 6️⃣ Expiry
     const expiresAt = new Date();
@@ -53,9 +57,19 @@ const createQuickSend = async (req, res) => {
       }
     });
 
+    // generate QR
+
+    const baseUrl =
+  process.env.BASE_URL || "http://localhost:3000";
+
+const qrUrl =
+  `${baseUrl}/quick-send/${code}`;
+    const qrCode = await QRCode.toDataURL(qrUrl);
+
     // 8️⃣ Render success page
     res.render("quickSendSuccess", {
-      code
+      code,
+      qrCode
     });
 
   } catch (error) {
@@ -79,10 +93,16 @@ const accessQuickSend = async (req,res) => {
     }
 
     if (new Date() > quickSend.expiresAt) {
+      await prisma.quickSend.delete({
+        where: { code }
+      });
       return res.send("Link expired");
     }
 
-    res.redirect(quickSend.fileUrl);
+    // res.redirect(quickSend.fileUrl);
+    res.render("quickSendFile", {
+      quickSend
+    });
 
   } catch (error) {
     console.error(error);

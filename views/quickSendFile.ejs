@@ -1,0 +1,9 @@
+<h1><%= quickSend.fileName %></h1>
+
+<a href="<%= quickSend.fileUrl %>" target="_blank">
+  Open File
+</a>
+
+<a href="<%= quickSend.fileUrl %>?download=<%= encodeURIComponent(quickSend.fileName) %>">
+    Download File
+  </a>
