@@ -109,5 +109,14 @@ const accessQuickSend = async (req,res) => {
     res.send("Error accessing quick send");
   }
 }
+const showEnterCodePage = (req, res) => {
+  res.render("enterCode");
+};
 
-module.exports = { createQuickSend,accessQuickSend };
+const receiveFile = (req, res) => {
+  const { code } = req.body;
+
+  res.redirect(`/quick-send/${code}`);
+};
+
+module.exports = { createQuickSend,accessQuickSend,showEnterCodePage,receiveFile };

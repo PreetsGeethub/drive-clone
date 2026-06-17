@@ -1,12 +1,451 @@
-<h1>Shared Folder</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= folder.name %> · Shared Folder</title>
 
-<h2><%= folder.name %></h2>
+  <script>
+    (function () {
+      var saved = localStorage.getItem('theme');
+      if (saved === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    })();
+  </script>
 
-<ul>
-  <% folder.files.forEach(file => { %>
-    <li>
-      <%= file.name %>
-      <a href="<%= file.url %>">Download</a>
-    </li>
-  <% }) %>
-</ul>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #F3F5F9;
+      --surface: #fff;
+      --surface-2: #FAFBFC;
+      --border: #E3E7EE;
+      --text: #1E2533;
+      --muted: #717A8C;
+      --primary: #0F766E;
+      --primary-dark: #0B5C56;
+      --primary-soft: #E6F4F2;
+      --radius: 10px;
+      --radius-lg: 16px;
+      --shadow: 0 1px 3px rgba(20,30,50,.07);
+      --shadow-md: 0 8px 28px rgba(20,30,50,.10);
+    }
+    [data-theme="dark"] {
+      --bg: #0F1620;
+      --surface: #1A2330;
+      --surface-2: #1F2A38;
+      --border: #2A3543;
+      --text: #E7EAF0;
+      --muted: #8B96A8;
+      --primary: #2DD4BF;
+      --primary-dark: #5EEAD4;
+      --primary-soft: rgba(45,212,191,.13);
+      --shadow: 0 1px 3px rgba(0,0,0,.3);
+      --shadow-md: 0 8px 28px rgba(0,0,0,.4);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      transition: background .2s, color .2s;
+    }
+
+    h1, h2, h3, .brand { font-family: 'Sora', sans-serif; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ── Topbar ── */
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+
+    .btn-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 7px; border-radius: 8px;
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); cursor: pointer; line-height: 0;
+      transition: background .15s, border-color .15s, color .15s;
+    }
+    .btn-icon:hover { background: var(--primary-soft); border-color: var(--primary); color: var(--primary-dark); }
+    .icon-sun { display: none; }
+    [data-theme="dark"] .icon-sun { display: block; }
+    [data-theme="dark"] .icon-moon { display: none; }
+
+    /* ── Page wrapper ── */
+    .page {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    /* ── Hero header ── */
+    .hero {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .hero-icon-wrap {
+      width: 72px; height: 72px;
+      background: #FEF3C7;
+      border: 1px solid #FBD38D;
+      border-radius: 20px;
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-bottom: 18px;
+    }
+    [data-theme="dark"] .hero-icon-wrap {
+      background: rgba(251,211,141,.12);
+      border-color: rgba(251,211,141,.28);
+    }
+
+    .hero h1 {
+      font-size: 1.7rem;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      margin-bottom: 8px;
+    }
+
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: .85rem;
+      color: var(--muted);
+    }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: .75rem; font-weight: 600;
+      border-radius: 999px;
+      padding: 3px 11px;
+    }
+    .badge-readonly {
+      background: #FEF3C7; color: #92400E; border: 1px solid #FBD38D;
+    }
+    [data-theme="dark"] .badge-readonly {
+      background: rgba(251,211,141,.14); color: #FBD38D; border-color: rgba(251,211,141,.3);
+    }
+    .badge-count {
+      background: var(--surface); color: var(--muted); border: 1px solid var(--border);
+    }
+
+    .hero-divider {
+      width: 48px; height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+      border-radius: 999px;
+      margin: 22px auto 0;
+      opacity: .6;
+    }
+
+    /* ── File list ── */
+    .file-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .file-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      transition: box-shadow .18s, transform .18s, border-color .18s;
+    }
+    .file-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+      border-color: var(--primary);
+    }
+
+    /* File icon */
+    .file-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .fi-image  { background: #F0FDF4; }
+    .fi-pdf    { background: #FEF2F2; }
+    .fi-video  { background: #FFF7ED; }
+    .fi-audio  { background: #FDF4FF; }
+    .fi-zip    { background: #F5F5F4; }
+    .fi-word   { background: #EFF6FF; }
+    .fi-sheet  { background: #F0FDF4; }
+    .fi-default{ background: #EEF2FF; }
+    [data-theme="dark"] .file-icon { background: rgba(255,255,255,.07) !important; }
+
+    /* File info */
+    .file-info { flex: 1; min-width: 0; }
+
+    .file-name {
+      font-weight: 600;
+      font-size: .92rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .file-sub {
+      font-size: .76rem;
+      color: var(--muted);
+      margin-top: 3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .file-sub .dot { opacity: .4; }
+
+    /* Download button */
+    .btn-download {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 16px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      font-family: 'Inter', sans-serif;
+      font-size: .84rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background .15s, transform .1s;
+      text-decoration: none;
+    }
+    .btn-download:hover { background: var(--primary-dark); transform: translateY(-1px); }
+    .btn-download:active { transform: translateY(0); }
+
+    /* ── Empty state ── */
+    .empty-state {
+      text-align: center;
+      padding: 64px 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+    }
+    .empty-state .empty-icon { font-size: 3rem; margin-bottom: 16px; }
+    .empty-state strong { display: block; font-size: 1rem; color: var(--text); margin-bottom: 6px; }
+    .empty-state span { font-size: .88rem; color: var(--muted); }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      margin-top: 48px;
+      font-size: .78rem;
+      color: var(--muted);
+    }
+    .footer a { color: var(--primary); font-weight: 500; }
+    .footer a:hover { color: var(--primary-dark); }
+
+    /* ── Entrance animation ── */
+    @media (prefers-reduced-motion: no-preference) {
+      .file-card { animation: fadein .32s ease both; }
+      .file-card:nth-child(1) { animation-delay: .04s; }
+      .file-card:nth-child(2) { animation-delay: .08s; }
+      .file-card:nth-child(3) { animation-delay: .12s; }
+      .file-card:nth-child(4) { animation-delay: .16s; }
+      .file-card:nth-child(n+5) { animation-delay: .18s; }
+      .hero { animation: fadein .28s ease both; }
+    }
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 560px) {
+      .topbar { padding: 12px 16px; }
+      .page { padding: 32px 14px 60px; }
+      .hero h1 { font-size: 1.35rem; }
+      .file-card { flex-wrap: wrap; gap: 12px; }
+      .btn-download { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="brand">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 12l-10 5L2 12"/>
+        <path d="M22 7l-10 5L2 7l10-5 10 5z"/>
+        <path d="M22 17l-10 5L2 17"/>
+      </svg>
+      FolderHub
+    </div>
+    <div class="topbar-right">
+      <button type="button" id="theme-toggle" class="btn-icon" title="Toggle dark mode">
+        <svg class="icon-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <svg class="icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="page">
+
+    <!-- Hero header -->
+    <div class="hero">
+      <div class="hero-icon-wrap">
+        <svg width="34" height="34" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2.5 5.5C2.5 4.67 3.17 4 4 4H9.5L11.5 6H20C20.83 6 21.5 6.67 21.5 7.5V17.5C21.5 18.33 20.83 19 20 19H4C3.17 19 2.5 18.33 2.5 17.5V5.5Z"
+            fill="#FBD38D" stroke="#D99A1F" stroke-width="1.2" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <h1><%= folder.name %></h1>
+
+      <div class="hero-meta">
+        <span class="badge badge-count">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+            <polyline points="13 2 13 9 20 9"/>
+          </svg>
+          <%= folder.files.length %> <%= folder.files.length === 1 ? 'file' : 'files' %>
+        </span>
+
+        <span class="badge badge-readonly">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          Read-only
+        </span>
+      </div>
+
+      <div class="hero-divider"></div>
+    </div>
+
+    <!-- File list -->
+    <% if (folder.files && folder.files.length > 0) { %>
+
+      <div class="file-list">
+        <% folder.files.forEach(function(file) {
+
+          /* ── File type icon ── */
+          var ext = (file.name || '').split('.').pop().toLowerCase();
+          var mime = (file.mimeType || file.mimetype || '').toLowerCase();
+          var icon = '📄'; var iconClass = 'fi-default';
+
+          if (mime.startsWith('image/') || ['jpg','jpeg','png','gif','webp','svg','avif'].includes(ext)) {
+            icon = '🖼️'; iconClass = 'fi-image';
+          } else if (mime === 'application/pdf' || ext === 'pdf') {
+            icon = '📕'; iconClass = 'fi-pdf';
+          } else if (['doc','docx'].includes(ext) || mime.includes('word')) {
+            icon = '📘'; iconClass = 'fi-word';
+          } else if (['xls','xlsx','csv'].includes(ext) || mime.includes('sheet') || mime.includes('excel')) {
+            icon = '📊'; iconClass = 'fi-sheet';
+          } else if (['zip','rar','tar','gz','7z'].includes(ext)) {
+            icon = '📦'; iconClass = 'fi-zip';
+          } else if (mime.startsWith('video/') || ['mp4','mov','avi','mkv','webm'].includes(ext)) {
+            icon = '🎥'; iconClass = 'fi-video';
+          } else if (mime.startsWith('audio/') || ['mp3','wav','ogg','flac','aac'].includes(ext)) {
+            icon = '🎵'; iconClass = 'fi-audio';
+          }
+
+          /* ── File size ── */
+          var sizeLabel = '';
+          if (file.size) {
+            var b = file.size;
+            if (b < 1024)        sizeLabel = b + ' B';
+            else if (b < 1048576) sizeLabel = (b/1024).toFixed(1).replace(/\.0$/,'') + ' KB';
+            else if (b < 1073741824) sizeLabel = (b/1048576).toFixed(1).replace(/\.0$/,'') + ' MB';
+            else sizeLabel = (b/1073741824).toFixed(1).replace(/\.0$/,'') + ' GB';
+          }
+
+        %>
+          <div class="file-card">
+
+            <div class="file-icon <%= iconClass %>"><%= icon %></div>
+
+            <div class="file-info">
+              <div class="file-name"><%= file.name %></div>
+              <% if (sizeLabel) { %>
+                <div class="file-sub"><span><%= sizeLabel %></span></div>
+              <% } %>
+            </div>
+
+            <!-- Original download URL preserved exactly -->
+            <a href="/files/download/<%= file.id %>">
+              Download
+            </a>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              Download
+            </a>
+
+          </div>
+        <% }); %>
+      </div>
+
+    <% } else { %>
+
+      <!-- Empty state -->
+      <div class="empty-state">
+        <div class="empty-icon">📂</div>
+        <strong>This shared folder is empty.</strong>
+        <span>No files have been added to this folder yet.</span>
+      </div>
+
+    <% } %>
+
+    <!-- Footer -->
+    <div class="footer">
+      Shared via <a href="/dashboard">FolderHub</a>
+    </div>
+
+  </main>
+
+  <script>
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var root = document.documentElement;
+      var isDark = root.getAttribute('data-theme') === 'dark';
+      root[isDark ? 'removeAttribute' : 'setAttribute']('data-theme', 'dark');
+      localStorage.setItem('theme', isDark ? 'light' : 'dark');
+    });
+  </script>
+
+</body>
+</html>

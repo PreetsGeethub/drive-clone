@@ -152,7 +152,9 @@ const downloadFile = async (req, res) => {
       return res.send("Unauthorized");
     }
 
-    res.redirect(file.url);
+    res.redirect(
+      `${file.url}?download=${encodeURIComponent(file.name)}`
+    );
 
   } catch (err) {
     console.error(err);

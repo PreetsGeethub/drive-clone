@@ -4,19 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard · FolderHub</title>
- 
-  <!-- Apply saved theme before first paint to avoid a flash -->
+
   <script>
     (function () {
       var saved = localStorage.getItem('theme');
       if (saved === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
     })();
   </script>
- 
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
- 
+
   <style>
     :root {
       --color-bg: #F3F5F9;
@@ -33,12 +32,18 @@
       --color-success: #1A8245;
       --color-success-soft: #E7F6ED;
       --color-success-text: #166534;
+      --color-accent: #6366F1;
+      --color-accent-soft: #EEF2FF;
+      --color-accent-dark: #4F46E5;
+      --color-amber: #D97706;
+      --color-amber-soft: #FEF3C7;
+      --color-amber-dark: #92400E;
       --radius-md: 10px;
       --radius-lg: 16px;
       --shadow-sm: 0 1px 2px rgba(20, 30, 50, 0.05);
       --shadow-md: 0 8px 24px rgba(20, 30, 50, 0.08);
     }
- 
+
     [data-theme="dark"] {
       --color-bg: #0F1620;
       --color-surface: #1A2330;
@@ -54,12 +59,18 @@
       --color-success: #4ADE80;
       --color-success-soft: rgba(74, 222, 128, 0.14);
       --color-success-text: #86EFAC;
+      --color-accent: #818CF8;
+      --color-accent-soft: rgba(129, 140, 248, 0.14);
+      --color-accent-dark: #A5B4FC;
+      --color-amber: #FBD38D;
+      --color-amber-soft: rgba(251, 211, 141, 0.14);
+      --color-amber-dark: #FBD38D;
       --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
       --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
     }
- 
+
     * { box-sizing: border-box; }
- 
+
     body {
       margin: 0;
       font-family: 'Inter', system-ui, sans-serif;
@@ -68,17 +79,15 @@
       -webkit-font-smoothing: antialiased;
       transition: background-color 0.2s ease, color 0.2s ease;
     }
- 
-    a:focus-visible,
-    button:focus-visible,
-    input:focus-visible {
+
+    a:focus-visible, button:focus-visible, input:focus-visible {
       outline: 2px solid var(--color-primary);
       outline-offset: 2px;
     }
- 
-    h1, h2, .brand { font-family: 'Sora', sans-serif; }
- 
-    /* ===== Topbar ===== */
+
+    h1, h2, h3, .brand { font-family: 'Sora', sans-serif; }
+
+    /* ── Topbar ── */
     .topbar {
       display: flex;
       justify-content: space-between;
@@ -88,7 +97,7 @@
       background: var(--color-surface);
       border-bottom: 1px solid var(--color-border);
     }
- 
+
     .brand {
       display: flex;
       align-items: center;
@@ -97,9 +106,9 @@
       font-weight: 700;
       color: var(--color-primary-dark);
     }
- 
+
     .brand svg { flex-shrink: 0; }
- 
+
     .user-info {
       display: flex;
       align-items: center;
@@ -107,81 +116,71 @@
       font-size: 0.92rem;
       color: var(--color-text-muted);
     }
- 
+
     .user-info strong { color: var(--color-text); }
- 
+
     .avatar {
-      width: 32px;
-      height: 32px;
+      width: 32px; height: 32px;
       border-radius: 50%;
       background: var(--color-primary);
       color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       font-family: 'Sora', sans-serif;
-      font-weight: 700;
-      font-size: 0.9rem;
+      font-weight: 700; font-size: 0.9rem;
       flex-shrink: 0;
     }
- 
-    /* ===== Buttons ===== */
+
+    /* ── Buttons ── */
     .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 10px 18px;
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 6px; padding: 10px 18px;
       border-radius: var(--radius-md);
-      font-family: 'Inter', sans-serif;
-      font-size: 0.9rem;
-      font-weight: 600;
+      font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 600;
       border: 1px solid transparent;
-      cursor: pointer;
-      text-decoration: none;
-      white-space: nowrap;
+      cursor: pointer; text-decoration: none; white-space: nowrap;
       transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
     }
- 
+
     .btn-primary { background: var(--color-primary); color: #fff; }
     .btn-primary:hover { background: var(--color-primary-dark); }
- 
+
     .btn-ghost {
       background: transparent;
       border-color: var(--color-border);
       color: var(--color-text-muted);
     }
     .btn-ghost:hover { border-color: var(--color-text-muted); color: var(--color-text); }
- 
+
+    .btn-accent { background: var(--color-accent); color: #fff; }
+    .btn-accent:hover { background: var(--color-accent-dark); }
+
+    .btn-amber {
+      background: var(--color-amber-soft);
+      color: var(--color-amber-dark);
+      border-color: transparent;
+    }
+    .btn-amber:hover { background: #FDE68A; }
+    [data-theme="dark"] .btn-amber:hover { background: rgba(251,211,141,.25); }
+
     .btn-icon {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 8px;
-      border-radius: 8px;
-      background: transparent;
-      border: 1px solid var(--color-border);
-      color: var(--color-text-muted);
-      cursor: pointer;
-      line-height: 0;
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 8px; border-radius: 8px;
+      background: transparent; border: 1px solid var(--color-border);
+      color: var(--color-text-muted); cursor: pointer; line-height: 0;
       transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
     }
     .btn-icon:hover { background: var(--color-primary-soft); border-color: var(--color-primary); color: var(--color-primary-dark); }
     .btn-icon.danger:hover { background: var(--color-danger-soft); border-color: var(--color-danger); color: var(--color-danger); }
- 
+
     .icon-sun { display: none; }
     [data-theme="dark"] .icon-sun { display: block; }
     [data-theme="dark"] .icon-moon { display: none; }
- 
-    /* ===== Layout ===== */
-    .container {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 32px 24px 64px;
-    }
- 
+
+    /* ── Layout ── */
+    .container { max-width: 960px; margin: 0 auto; padding: 32px 24px 64px; }
+
     .section { margin-top: 28px; }
- 
+
     .card {
       background: var(--color-surface);
       border: 1px solid var(--color-border);
@@ -189,89 +188,139 @@
       padding: 24px;
       box-shadow: var(--shadow-sm);
     }
- 
+
     .card h2 { margin: 0 0 16px; font-size: 1.1rem; }
- 
-    /* ===== Alert ===== */
+
+    /* ── Alerts ── */
     .alert {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
+      display: flex; align-items: flex-start; gap: 10px;
       border-radius: var(--radius-md);
-      padding: 14px 16px;
-      margin-bottom: 16px;
-      font-size: 0.9rem;
-      border: 1px solid;
+      padding: 14px 16px; margin-bottom: 16px;
+      font-size: 0.9rem; border: 1px solid;
     }
     .alert svg { flex-shrink: 0; margin-top: 2px; }
     .alert ul { margin: 0; padding-left: 18px; }
     .alert p { margin: 0; }
- 
-    .alert-error {
-      background: var(--color-danger-soft);
-      border-color: #F5C2C2;
-      color: var(--color-danger-text);
-    }
- 
-    .alert-success {
-      background: var(--color-success-soft);
-      border-color: #B7E4C7;
-      color: var(--color-success-text);
-    }
- 
+
+    .alert-error { background: var(--color-danger-soft); border-color: #F5C2C2; color: var(--color-danger-text); }
+    .alert-success { background: var(--color-success-soft); border-color: #B7E4C7; color: var(--color-success-text); }
     [data-theme="dark"] .alert-error,
-    [data-theme="dark"] .alert-success {
-      border-color: transparent;
-    }
- 
-    /* ===== Create folder form ===== */
+    [data-theme="dark"] .alert-success { border-color: transparent; }
+
+    /* ── Create folder form ── */
     .create-form { display: flex; gap: 10px; }
     .create-form input { flex: 1; }
- 
+
     input[type="text"] {
       padding: 10px 14px;
       border: 1px solid var(--color-border);
       border-radius: var(--radius-md);
-      font-family: 'Inter', sans-serif;
-      font-size: 0.95rem;
-      background: #FAFBFC;
-      color: var(--color-text);
+      font-family: 'Inter', sans-serif; font-size: 0.95rem;
+      background: #FAFBFC; color: var(--color-text);
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
- 
+
     input[type="text"]:focus {
       outline: none;
       border-color: var(--color-primary);
       box-shadow: 0 0 0 3px var(--color-primary-soft);
       background: #fff;
     }
- 
-    /* ===== Section header ===== */
+
+    /* ── Section header ── */
     .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
+      display: flex; justify-content: space-between; align-items: baseline;
       margin-bottom: 16px;
     }
     .section-header h2 { margin: 0; font-size: 1.1rem; }
- 
+
     .badge {
-      font-size: 0.8rem;
-      font-weight: 600;
+      font-size: 0.8rem; font-weight: 600;
       color: var(--color-text-muted);
       background: var(--color-surface);
       border: 1px solid var(--color-border);
-      border-radius: 999px;
-      padding: 3px 12px;
+      border-radius: 999px; padding: 3px 12px;
     }
- 
-    /* ===== Folder grid ===== */
+
+    /* ── Quick Actions ── */
+    .quick-actions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .quick-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: 22px 24px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .quick-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .quick-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+    .quick-card:hover::before { opacity: 1; }
+
+    .quick-card.send::before  { background: linear-gradient(90deg, var(--color-accent), #8B5CF6); }
+    .quick-card.recv::before  { background: linear-gradient(90deg, var(--color-primary), var(--color-primary-dark)); }
+
+    .quick-card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .quick-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+
+    .quick-icon.send-icon {
+      background: var(--color-accent-soft);
+    }
+    .quick-icon.recv-icon {
+      background: var(--color-primary-soft);
+    }
+
+    .quick-card-text { flex: 1; }
+    .quick-card-text h3 {
+      margin: 0 0 5px;
+      font-size: 0.97rem;
+      font-weight: 700;
+      color: var(--color-text);
+    }
+    .quick-card-text p {
+      margin: 0;
+      font-size: 0.82rem;
+      color: var(--color-text-muted);
+      line-height: 1.5;
+    }
+
+    /* ── Folder grid ── */
     .folder-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
       gap: 16px;
     }
- 
+
     .folder-card {
       background: var(--color-surface);
       border: 1px solid var(--color-border);
@@ -279,100 +328,81 @@
       padding: 16px;
       box-shadow: var(--shadow-sm);
       transition: box-shadow 0.15s ease, transform 0.15s ease;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+      display: flex; flex-direction: column; gap: 12px;
     }
- 
+
     .folder-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
- 
+
     .folder-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 12px;
     }
     .folder-row.hidden { display: none; }
- 
+
     .folder-link {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-      color: var(--color-text);
-      font-weight: 600;
-      min-width: 0;
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none; color: var(--color-text);
+      font-weight: 600; min-width: 0;
     }
- 
+
     .folder-icon { display: flex; flex-shrink: 0; }
- 
-    .folder-name {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
- 
+
+    .folder-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
     .folder-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
     .folder-actions form { display: flex; }
- 
-    /* Rename form */
-    .rename-form {
-      display: none;
-      align-items: center;
-      gap: 8px;
-    }
+
+    .rename-form { display: none; align-items: center; gap: 8px; }
     .rename-form.open { display: flex; }
     .rename-form input { flex: 1; padding: 8px 10px; font-size: 0.85rem; }
     .rename-form .btn { padding: 8px 14px; font-size: 0.85rem; }
- 
-    /* ===== Empty state ===== */
+
+    /* ── Empty state ── */
     .empty-state {
-      text-align: center;
-      padding: 48px 24px;
+      text-align: center; padding: 48px 24px;
       color: var(--color-text-muted);
     }
     .empty-state svg { margin-bottom: 12px; color: var(--color-text-muted); opacity: 0.5; }
     .empty-state p { margin: 4px 0; }
     .empty-state .hint { font-size: 0.9rem; }
     .empty-state strong { color: var(--color-text); }
- 
-    /* ===== Loading spinner ===== */
-    .spinner {
-      animation: spin 0.6s linear infinite;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
- 
-    /* ===== Folder card entrance ===== */
+
+    /* ── Spinner ── */
+    .spinner { animation: spin 0.6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Entrance animations ── */
     @media (prefers-reduced-motion: no-preference) {
-      .folder-card {
-        animation: fade-in-up 0.35s ease both;
-      }
+      .folder-card { animation: fade-in-up 0.35s ease both; }
       .folder-card:nth-child(1) { animation-delay: 0.02s; }
       .folder-card:nth-child(2) { animation-delay: 0.06s; }
       .folder-card:nth-child(3) { animation-delay: 0.1s; }
       .folder-card:nth-child(4) { animation-delay: 0.14s; }
       .folder-card:nth-child(5) { animation-delay: 0.18s; }
       .folder-card:nth-child(n+6) { animation-delay: 0.2s; }
+      .quick-card { animation: fade-in-up 0.3s ease both; }
+      .quick-card:nth-child(1) { animation-delay: 0.04s; }
+      .quick-card:nth-child(2) { animation-delay: 0.1s; }
     }
     @keyframes fade-in-up {
       from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
+      to   { opacity: 1; transform: translateY(0); }
     }
- 
+
+    /* ── Responsive ── */
     @media (max-width: 600px) {
       .topbar { flex-direction: column; align-items: flex-start; gap: 12px; }
       .container { padding: 24px 16px 48px; }
       .create-form { flex-direction: column; }
       .folder-grid { grid-template-columns: 1fr; }
+      .quick-actions-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
- 
+
 <body>
- 
-  <!-- ===== Topbar ===== -->
+
+  <!-- Topbar -->
   <header class="topbar">
     <div class="brand">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -382,28 +412,24 @@
       </svg>
       FolderHub
     </div>
- 
+
     <div class="user-info">
       <div class="avatar"><%= user.firstName.charAt(0).toUpperCase() %></div>
       <span>Welcome back, <strong><%= user.firstName %></strong></span>
- 
+
       <button type="button" id="theme-toggle" class="btn-icon" aria-label="Toggle dark mode" title="Toggle dark mode">
         <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="5"/>
-          <line x1="12" y1="1" x2="12" y2="3"/>
-          <line x1="12" y1="21" x2="12" y2="23"/>
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-          <line x1="1" y1="12" x2="3" y2="12"/>
-          <line x1="21" y1="12" x2="23" y2="12"/>
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
         </svg>
         <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
         </svg>
       </button>
- 
+
       <a href="/logout" class="btn btn-ghost">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
@@ -414,42 +440,85 @@
       </a>
     </div>
   </header>
- 
+
   <main class="container">
- 
-    <!-- ===== Errors ===== -->
+
+    <!-- Errors -->
     <% if (errors && errors.length > 0) { %>
       <div class="alert alert-error">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-          <line x1="12" y1="9" x2="12" y2="13"/>
-          <line x1="12" y1="17" x2="12.01" y2="17"/>
+          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
         </svg>
-        <ul>
-          <% errors.forEach(err => { %>
-            <li><%= err.msg %></li>
-          <% }) %>
-        </ul>
+        <ul><% errors.forEach(err => { %><li><%= err.msg %></li><% }) %></ul>
       </div>
     <% } %>
- 
-    <!-- ===== Success messages ===== -->
+
+    <!-- Success messages -->
     <% if (typeof success !== 'undefined' && success && success.length > 0) { %>
       <div class="alert alert-success">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
           <polyline points="22 4 12 14.01 9 17.01"/>
         </svg>
-        <ul>
-          <% success.forEach(msg => { %>
-            <li><%= msg %></li>
-          <% }) %>
-        </ul>
+        <ul><% success.forEach(msg => { %><li><%= msg %></li><% }) %></ul>
       </div>
     <% } %>
- 
-    <!-- ===== Create Folder ===== -->
-    <section class="card">
+
+    <!-- ══════════════════════════════════════
+         Quick Actions
+    ══════════════════════════════════════ -->
+    <section class="section" style="margin-top: 0;">
+      <div class="section-header">
+        <h2>Quick Actions</h2>
+      </div>
+
+      <div class="quick-actions-grid">
+
+        <!-- ⚡ Quick Send -->
+        <div class="quick-card send">
+          <div class="quick-card-header">
+            <div class="quick-icon send-icon">⚡</div>
+            <div class="quick-card-text">
+              <h3>Quick Send</h3>
+              <p>Instantly transfer a file between devices using a code or QR.</p>
+            </div>
+          </div>
+          <a href="/quick-send" class="btn btn-accent">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+            Send File
+          </a>
+        </div>
+
+        <!-- 📥 Receive File -->
+        <div class="quick-card recv">
+          <div class="quick-card-header">
+            <div class="quick-icon recv-icon">📥</div>
+            <div class="quick-card-text">
+              <h3>Receive File</h3>
+              <p>Have a code already? Enter it to access a shared file.</p>
+            </div>
+          </div>
+          <a href="/receive-file" class="btn btn-primary">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Receive File
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════
+         Create Folder
+    ══════════════════════════════════════ -->
+    <section class="card section">
       <h2>Create a new folder</h2>
       <form class="create-form" id="create-form" action="/folders" method="POST">
         <input type="text" name="name" placeholder="e.g. Project Reports" required>
@@ -462,8 +531,10 @@
         </button>
       </form>
     </section>
- 
-    <!-- ===== Folder List ===== -->
+
+    <!-- ══════════════════════════════════════
+         Folder List
+    ══════════════════════════════════════ -->
     <section class="section">
       <div class="section-header">
         <h2>Your folders</h2>
@@ -471,14 +542,12 @@
           <span class="badge"><%= folders.length %> <%= folders.length === 1 ? 'folder' : 'folders' %></span>
         <% } %>
       </div>
- 
+
       <% if (folders && folders.length > 0) { %>
- 
         <div class="folder-grid">
           <% folders.forEach(folder => { %>
- 
             <div class="folder-card">
- 
+
               <div class="folder-row" id="view-<%= folder.id %>">
                 <a class="folder-link" href="/folders/<%= folder.id %>">
                   <span class="folder-icon">
@@ -488,14 +557,14 @@
                   </span>
                   <span class="folder-name"><%= folder.name %></span>
                 </a>
- 
+
                 <div class="folder-actions">
                   <button type="button" class="btn-icon" onclick="toggleRename('<%= folder.id %>')" aria-label="Rename folder" title="Rename">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
                     </svg>
                   </button>
- 
+
                   <form action="/folders/delete" method="POST" onsubmit="return confirm('Delete this folder? This cannot be undone.');">
                     <input type="hidden" name="id" value="<%= folder.id %>">
                     <button type="submit" class="btn-icon danger" aria-label="Delete folder" title="Delete">
@@ -510,21 +579,19 @@
                   </form>
                 </div>
               </div>
- 
+
               <form class="rename-form" id="rename-<%= folder.id %>" action="/folders/rename" method="POST">
                 <input type="hidden" name="id" value="<%= folder.id %>">
                 <input type="text" name="name" value="<%= folder.name %>" required>
                 <button type="submit" class="btn btn-primary">Save</button>
                 <button type="button" class="btn btn-ghost" onclick="toggleRename('<%= folder.id %>')">Cancel</button>
               </form>
- 
+
             </div>
- 
           <% }) %>
         </div>
- 
+
       <% } else { %>
- 
         <div class="card empty-state">
           <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v1H3z"/>
@@ -533,19 +600,17 @@
           <p><strong>No folders yet</strong></p>
           <p class="hint">Create your first folder using the form above to get started.</p>
         </div>
- 
       <% } %>
     </section>
- 
+
   </main>
- 
+
   <script>
     function toggleRename(id) {
       document.getElementById('view-' + id).classList.toggle('hidden');
       document.getElementById('rename-' + id).classList.toggle('open');
     }
- 
-    // Dark mode toggle
+
     document.getElementById('theme-toggle').addEventListener('click', function () {
       var root = document.documentElement;
       var isDark = root.getAttribute('data-theme') === 'dark';
@@ -557,8 +622,7 @@
         localStorage.setItem('theme', 'dark');
       }
     });
- 
-    // Show a loading state on the create-folder button while it submits
+
     document.getElementById('create-form').addEventListener('submit', function () {
       var btn = document.getElementById('create-btn');
       btn.disabled = true;
@@ -569,7 +633,6 @@
         '</svg> Creating…';
     });
   </script>
- 
+
 </body>
 </html>
- 

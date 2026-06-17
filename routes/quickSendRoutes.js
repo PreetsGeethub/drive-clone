@@ -5,7 +5,9 @@ const upload = require("../middlewares/uploadMiddleware");
 
 const {
   createQuickSend,
-  accessQuickSend
+  accessQuickSend,
+  showEnterCodePage,
+  receiveFile
 } = require("../controllers/quickSendController");
 
 // Render Quick Send upload page
@@ -34,4 +36,8 @@ router.post("/enter-code", (req, res) => {
 
   res.redirect(`/quick-send/${code}`);
 });
+
+router.get("/receive-file", showEnterCodePage);
+
+router.post("/receive-file", receiveFile);
 module.exports = router;
