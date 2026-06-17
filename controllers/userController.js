@@ -1,5 +1,5 @@
 const { body, validationResult } = require("express-validator");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 const {prisma} = require("../prismaClient");
 
 const userValidation = [
