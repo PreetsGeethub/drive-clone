@@ -36,9 +36,12 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Routes
 app.get("/", (req, res) => {
-  res.send("Hello World");
-});
+  if (req.isAuthenticated()) {
+    return res.redirect("/dashboard");
+  }
 
+  res.redirect("/login");
+});
 
 app.get("/test", (req, res) => {
   res.send(req.user);
