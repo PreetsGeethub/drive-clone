@@ -1,70 +1,284 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Folder</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= folder.name %> · FolderHub</title>
+
+  <script>
+    (function () {
+      var saved = localStorage.getItem('theme');
+      if (saved === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #F3F5F9; --surface: #fff; --border: #E3E7EE;
+      --text: #1E2533; --muted: #717A8C;
+      --primary: #0F766E; --primary-dark: #0B5C56; --primary-soft: #E6F4F2;
+      --danger: #DC4C4C; --danger-soft: #FCEAEA; --danger-text: #9B2C2C;
+      --radius: 10px; --radius-lg: 16px;
+      --shadow: 0 1px 3px rgba(20,30,50,.07); --shadow-md: 0 8px 24px rgba(20,30,50,.09);
+    }
+    [data-theme="dark"] {
+      --bg: #0F1620; --surface: #1A2330; --border: #2A3543;
+      --text: #E7EAF0; --muted: #8B96A8;
+      --primary: #2DD4BF; --primary-dark: #5EEAD4; --primary-soft: rgba(45,212,191,.14);
+      --danger: #F87171; --danger-soft: rgba(248,113,113,.14); --danger-text: #FCA5A5;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; transition: background .2s, color .2s; }
+    h1, h2, .brand { font-family: 'Sora', sans-serif; }
+    a { text-decoration: none; color: inherit; }
+
+    /* Topbar */
+    .topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 16px 32px; background: var(--surface); border-bottom: 1px solid var(--border); }
+    .brand { display: flex; align-items: center; gap: 8px; font-size: 1.15rem; font-weight: 700; color: var(--primary-dark); }
+    .user-info { display: flex; align-items: center; gap: 12px; font-size: .9rem; color: var(--muted); }
+    .user-info strong { color: var(--text); }
+    .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-family: 'Sora', sans-serif; font-weight: 700; font-size: .85rem; flex-shrink: 0; }
+
+    /* Buttons */
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: var(--radius); font-family: 'Inter', sans-serif; font-size: .88rem; font-weight: 600; border: 1px solid transparent; cursor: pointer; white-space: nowrap; transition: background .15s, border-color .15s, color .15s; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-ghost { background: transparent; border-color: var(--border); color: var(--muted); }
+    .btn-ghost:hover { border-color: var(--muted); color: var(--text); }
+    .btn-danger { background: transparent; border-color: var(--border); color: var(--danger); }
+    .btn-danger:hover { background: var(--danger-soft); border-color: var(--danger); }
+    .btn-sm { padding: 6px 12px; font-size: .82rem; }
+    .btn-icon { display: inline-flex; align-items: center; justify-content: center; padding: 7px; border-radius: 8px; background: transparent; border: 1px solid var(--border); color: var(--muted); cursor: pointer; line-height: 0; transition: background .15s, border-color .15s, color .15s; }
+    .btn-icon:hover { background: var(--primary-soft); border-color: var(--primary); color: var(--primary-dark); }
+    .icon-sun { display: none; }
+    [data-theme="dark"] .icon-sun { display: block; }
+    [data-theme="dark"] .icon-moon { display: none; }
+
+    /* Layout */
+    .container { max-width: 900px; margin: 0 auto; padding: 32px 24px 64px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow); }
+    .section { margin-top: 24px; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .section-header h2 { font-size: 1.05rem; }
+    .badge { font-size: .78rem; font-weight: 600; color: var(--muted); background: var(--bg); border: 1px solid var(--border); border-radius: 999px; padding: 3px 12px; }
+
+    /* Breadcrumb */
+    .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: .85rem; color: var(--muted); margin-bottom: 20px; }
+    .breadcrumb a { color: var(--primary); font-weight: 500; }
+    .breadcrumb a:hover { color: var(--primary-dark); }
+
+    /* Page header */
+    .page-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; }
+    .page-header-left { display: flex; align-items: center; gap: 14px; }
+    .folder-icon-lg { width: 50px; height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #FEF3C7; border-radius: 14px; border: 1px solid #FBD38D; }
+    [data-theme="dark"] .folder-icon-lg { background: rgba(251,211,141,.12); border-color: rgba(251,211,141,.3); }
+    .page-header h1 { font-size: 1.55rem; font-weight: 700; }
+    .page-meta { font-size: .83rem; color: var(--muted); margin-top: 3px; }
+
+    /* Upload zone */
+    .upload-zone { display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px dashed var(--border); border-radius: var(--radius-lg); padding: 36px 20px; text-align: center; background: var(--bg); cursor: pointer; transition: border-color .15s, background .15s; width: 100%; }
+    .upload-zone:hover, .upload-zone.dragover { border-color: var(--primary); background: var(--primary-soft); }
+    .upload-zone svg { color: var(--muted); margin-bottom: 10px; display: block; }
+    .upload-zone input[type="file"] { display: none; }
+    .upload-label-text { font-weight: 600; font-size: .92rem; }
+    .upload-hint { font-size: .8rem; color: var(--muted); margin-top: 4px; }
+    .upload-actions { margin-top: 14px; display: flex; justify-content: center; }
+
+    /* File list */
+    .file-list { display: flex; flex-direction: column; gap: 10px; }
+    .file-row { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); transition: box-shadow .15s, transform .15s; }
+    .file-row:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+    .file-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; background: #EEF2FF; }
+    .file-info { flex: 1; min-width: 0; }
+    .file-name { font-weight: 600; font-size: .9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .file-size { font-size: .78rem; color: var(--muted); margin-top: 2px; }
+    .file-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .file-actions form { display: flex; }
+
+    /* Empty state */
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
+    .empty-state svg { margin-bottom: 12px; opacity: .4; }
+    .empty-state strong { display: block; color: var(--text); margin-bottom: 4px; font-size: .95rem; }
+    .empty-state span { font-size: .85rem; }
+
+    /* Spinner */
+    .spinner { animation: spin .6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .file-row { animation: fadein .3s ease both; }
+      .file-row:nth-child(1) { animation-delay: .03s; }
+      .file-row:nth-child(2) { animation-delay: .07s; }
+      .file-row:nth-child(3) { animation-delay: .11s; }
+      .file-row:nth-child(n+4) { animation-delay: .14s; }
+    }
+    @keyframes fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+    @media (max-width: 600px) {
+      .topbar { flex-wrap: wrap; padding: 14px 16px; }
+      .container { padding: 20px 14px 48px; }
+      .page-header { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
 </head>
 
 <body>
 
-<h1>📁 <%= folder.name %></h1>
-
-<p>Welcome <%= user.firstName %></p>
-
-<a href="/dashboard">⬅ Back to Dashboard</a>
-
-<hr>
-
-<h2>Files</h2>
-
-<% if (folder.files.length > 0) { %>
-
-  <ul>
-    <% folder.files.forEach(file => { %>
-      <li>
-        📄 <%= file.name %> ( <%= file.size %> bytes )
-      </li>
-    <% }) %>
-  </ul>
-
-<% } else { %>
-
-  <p>No files in this folder yet</p>
-
-<% } %>
-
-<h2>Upload File</h2>
-
-<form action="/files/upload/<%= folder.id %>" method="POST" enctype="multipart/form-data">
-  <input type="file" name="file" required>
-  <button type="submit">Upload</button>
-  
-</form>
-<% if (folder.files && folder.files.length > 0) { %>
-
-  <% folder.files.forEach(file => { %>
-
-    <div>
-      📄 <%= file.name %>
-
-      <a href="/files/download/<%= file.id %>">
-        Download
-      </a>
-      <a href="/files/delete/<%= file.id %>">
-        Delete
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="brand">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12l-10 5L2 12"/><path d="M22 7l-10 5L2 7l10-5 10 5z"/><path d="M22 17l-10 5L2 17"/></svg>
+      FolderHub
+    </div>
+    <div class="user-info">
+      <div class="avatar"><%= user.firstName.charAt(0).toUpperCase() %></div>
+      <span>Welcome back, <strong><%= user.firstName %></strong></span>
+      <button type="button" id="theme-toggle" class="btn-icon" title="Toggle dark mode">
+        <svg class="icon-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <a href="/dashboard" class="btn btn-ghost">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        Back to Dashboard
       </a>
     </div>
-    <a href="/share/create/<%= folder.id %>">
-      Share Folder 🔗
-    </a>
+  </header>
 
-  <% }) %>
+  <main class="container">
 
-<% } else { %>
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+      <a href="/dashboard">Dashboard</a>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      <span><%= folder.name %></span>
+    </nav>
 
-  <p>No files yet</p>
+    <!-- Page header -->
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="folder-icon-lg">
+          <svg width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2.5 5.5C2.5 4.67 3.17 4 4 4H9.5L11.5 6H20C20.83 6 21.5 6.67 21.5 7.5V17.5C21.5 18.33 20.83 19 20 19H4C3.17 19 2.5 18.33 2.5 17.5V5.5Z" fill="#FBD38D" stroke="#D99A1F" stroke-width="1.2" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <h1><%= folder.name %></h1>
+          <p class="page-meta"><%= folder.files.length %> <%= folder.files.length === 1 ? 'file' : 'files' %></p>
+        </div>
+      </div>
+      <!-- Share Folder (original link preserved) -->
+      <a href="/share/create/<%= folder.id %>" class="btn btn-ghost">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Share Folder
+      </a>
+    </div>
 
-<% } %>
+    <!-- Upload File (original action/enctype preserved) -->
+    <div class="card">
+      <div class="section-header">
+        <h2>Upload File</h2>
+      </div>
+      <form id="upload-form" action="/files/upload/<%= folder.id %>" method="POST" enctype="multipart/form-data">
+        <label class="upload-zone" id="upload-zone" for="file-input">
+          <input type="file" id="file-input" name="file" required>
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <div class="upload-label-text">Click to choose a file</div>
+          <div class="upload-hint" id="upload-hint">or drag and drop it here</div>
+        </label>
+        <div class="upload-actions">
+          <button type="submit" class="btn btn-primary" id="upload-btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Upload
+          </button>
+        </div>
+      </form>
+    </div>
 
+    <!-- Files (original routes preserved: /files/download, /files/delete) -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Files</h2>
+        <% if (folder.files && folder.files.length > 0) { %>
+          <span class="badge"><%= folder.files.length %> <%= folder.files.length === 1 ? 'file' : 'files' %></span>
+        <% } %>
+      </div>
+
+      <% if (folder.files.length > 0) { %>
+        <div class="file-list">
+          <% folder.files.forEach(file => { %>
+            <div class="file-row">
+              <div class="file-icon">📄</div>
+              <div class="file-info">
+                <div class="file-name"><%= file.name %></div>
+                <div class="file-size"><%= file.size %> bytes</div>
+              </div>
+              <div class="file-actions">
+                <a href="/files/download/<%= file.id %>" class="btn btn-ghost btn-sm">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Download
+                </a>
+                <a href="/files/delete/<%= file.id %>" class="btn btn-danger btn-sm">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/></svg>
+                  Delete
+                </a>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <div class="card empty-state">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+          <strong>No files in this folder yet</strong>
+          <span>Upload your first file using the form above.</span>
+        </div>
+      <% } %>
+    </section>
+
+  </main>
+
+  <script>
+    // Dark mode
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var root = document.documentElement;
+      var isDark = root.getAttribute('data-theme') === 'dark';
+      root[isDark ? 'removeAttribute' : 'setAttribute']('data-theme', 'dark');
+      localStorage.setItem('theme', isDark ? 'light' : 'dark');
+    });
+
+    // Show filename when selected
+    var fileInput = document.getElementById('file-input');
+    var hint = document.getElementById('upload-hint');
+    fileInput.addEventListener('change', function () {
+      if (fileInput.files[0]) {
+        hint.textContent = '✓ ' + fileInput.files[0].name;
+        hint.style.cssText = 'color:var(--primary);font-weight:600';
+      }
+    });
+
+    // Drag and drop
+    var zone = document.getElementById('upload-zone');
+    zone.addEventListener('dragover', function (e) { e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave', function () { zone.classList.remove('dragover'); });
+    zone.addEventListener('drop', function (e) {
+      e.preventDefault(); zone.classList.remove('dragover');
+      if (e.dataTransfer.files[0]) {
+        fileInput.files = e.dataTransfer.files;
+        hint.textContent = '✓ ' + e.dataTransfer.files[0].name;
+        hint.style.cssText = 'color:var(--primary);font-weight:600';
+      }
+    });
+
+    // Upload loading state
+    document.getElementById('upload-form').addEventListener('submit', function () {
+      var btn = document.getElementById('upload-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<svg class="spinner" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" stroke-opacity=".25"/><path d="M22 12a10 10 0 0 1-10 10"/></svg> Uploading…';
+    });
+  </script>
 
 </body>
 </html>
