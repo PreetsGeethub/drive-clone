@@ -1,9 +1,497 @@
-<h1><%= quickSend.fileName %></h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= quickSend.fileName %> · QuickSend</title>
 
-<a href="<%= quickSend.fileUrl %>" target="_blank">
-  Open File
-</a>
+  <script>
+    (function () {
+      var saved = localStorage.getItem('theme');
+      if (saved === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    })();
+  </script>
 
-<a href="<%= quickSend.fileUrl %>?download=<%= encodeURIComponent(quickSend.fileName) %>">
-    Download File
-  </a>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --color-bg: #F3F5F9;
+      --color-surface: #FFFFFF;
+      --color-border: #E3E7EE;
+      --color-text: #1E2533;
+      --color-text-muted: #717A8C;
+      --color-primary: #0F766E;
+      --color-primary-dark: #0B5C56;
+      --color-primary-soft: #E6F4F2;
+      --color-accent: #6366F1;
+      --color-accent-dark: #4F46E5;
+      --color-accent-soft: #EEF2FF;
+      --color-success: #1A8245;
+      --color-success-soft: #E7F6ED;
+      --color-success-text: #166534;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --shadow-sm: 0 1px 2px rgba(20, 30, 50, 0.05);
+      --shadow-md: 0 8px 32px rgba(20, 30, 50, 0.10);
+      --shadow-lg: 0 20px 60px rgba(20, 30, 50, 0.12);
+    }
+
+    [data-theme="dark"] {
+      --color-bg: #0F1620;
+      --color-surface: #1A2330;
+      --color-border: #2A3543;
+      --color-text: #E7EAF0;
+      --color-text-muted: #8B96A8;
+      --color-primary: #2DD4BF;
+      --color-primary-dark: #5EEAD4;
+      --color-primary-soft: rgba(45, 212, 191, 0.14);
+      --color-accent: #818CF8;
+      --color-accent-dark: #A5B4FC;
+      --color-accent-soft: rgba(129, 140, 248, 0.14);
+      --color-success: #4ADE80;
+      --color-success-soft: rgba(74, 222, 128, 0.13);
+      --color-success-text: #86EFAC;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.35);
+      --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    h1, h2, .brand { font-family: 'Sora', sans-serif; }
+    a { text-decoration: none; color: inherit; }
+    a:focus-visible, button:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+
+    /* ── Topbar ── */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 15px 32px;
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .brand {
+      display: flex; align-items: center; gap: 9px;
+      font-size: 1.15rem; font-weight: 700;
+      color: var(--color-primary-dark);
+    }
+
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+
+    .btn-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 8px; border-radius: 8px;
+      background: transparent; border: 1px solid var(--color-border);
+      color: var(--color-text-muted); cursor: pointer; line-height: 0;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover {
+      background: var(--color-primary-soft);
+      border-color: var(--color-primary);
+      color: var(--color-primary-dark);
+    }
+    .icon-sun { display: none; }
+    [data-theme="dark"] .icon-sun { display: block; }
+    [data-theme="dark"] .icon-moon { display: none; }
+
+    /* ── Back link ── */
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.84rem; font-weight: 500;
+      color: var(--color-text-muted);
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--color-primary); }
+
+    /* ── Page wrapper ── */
+    .page {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px 80px;
+      min-height: calc(100vh - 65px);
+    }
+
+    .page-top {
+      width: 100%;
+      max-width: 520px;
+      margin-bottom: 28px;
+    }
+
+    /* ── Main card ── */
+    .card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      width: 100%;
+      max-width: 520px;
+      overflow: hidden;
+    }
+
+    /* Card top accent stripe */
+    .card-stripe {
+      height: 4px;
+      background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent) 100%);
+    }
+
+    .card-body { padding: 36px 40px 40px; }
+
+    /* ── Status row ── */
+    .status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+
+    .badge-ready {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 12px;
+      background: var(--color-success-soft);
+      color: var(--color-success-text);
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      border: 1px solid rgba(26, 130, 69, 0.2);
+    }
+    [data-theme="dark"] .badge-ready { border-color: rgba(74, 222, 128, 0.25); }
+
+    .badge-ready-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--color-success);
+      box-shadow: 0 0 0 2px var(--color-success-soft);
+    }
+
+    .badge-qs {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px;
+      background: var(--color-accent-soft);
+      color: var(--color-accent);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* ── File block ── */
+    .file-block {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 28px;
+    }
+
+    .file-icon-wrap {
+      width: 56px; height: 56px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+
+    /* Type-specific icon backgrounds */
+    .fi-image   { background: #F0FDF4; }
+    .fi-pdf     { background: #FEF2F2; }
+    .fi-word    { background: #EFF6FF; }
+    .fi-sheet   { background: #F0FDF4; }
+    .fi-zip     { background: #F5F5F4; }
+    .fi-video   { background: #FFF7ED; }
+    .fi-audio   { background: #FDF4FF; }
+    .fi-default { background: var(--color-accent-soft); }
+    [data-theme="dark"] .file-icon-wrap { background: rgba(255,255,255,0.07) !important; }
+
+    .file-details { min-width: 0; flex: 1; }
+
+    .file-name {
+      font-family: 'Sora', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--color-text);
+      word-break: break-word;
+      line-height: 1.35;
+      margin-bottom: 5px;
+    }
+
+    .file-available {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.76rem;
+      color: var(--color-success);
+      font-weight: 600;
+    }
+
+    /* ── Shared note ── */
+    .shared-note {
+      font-size: 0.83rem;
+      color: var(--color-text-muted);
+      text-align: center;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    /* ── Action buttons ── */
+    .actions { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 9px;
+      padding: 14px 20px;
+      border-radius: var(--radius-md);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.93rem; font-weight: 700;
+      border: 1px solid transparent;
+      cursor: pointer; text-decoration: none; white-space: nowrap;
+      transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.12s, box-shadow 0.15s;
+      letter-spacing: 0.01em;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(15, 118, 110, 0.25);
+    }
+    .btn-primary:hover {
+      background: var(--color-primary-dark);
+      box-shadow: 0 4px 16px rgba(15, 118, 110, 0.35);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border-color: var(--color-border);
+      color: var(--color-text-muted);
+    }
+    .btn-outline:hover {
+      border-color: var(--color-accent);
+      color: var(--color-accent);
+      background: var(--color-accent-soft);
+    }
+
+    /* ── Security note ── */
+    .security-note {
+      display: flex; align-items: flex-start; gap: 9px;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      font-size: 0.78rem;
+      color: var(--color-text-muted);
+      line-height: 1.55;
+    }
+    .security-note svg { flex-shrink: 0; margin-top: 1px; color: var(--color-text-muted); opacity: 0.7; }
+
+    /* ── Footer ── */
+    .card-footer {
+      border-top: 1px solid var(--color-border);
+      padding: 14px 40px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
+    }
+    .card-footer a { color: var(--color-primary); font-weight: 500; }
+    .card-footer a:hover { color: var(--color-primary-dark); }
+
+    @media (max-width: 560px) {
+      .topbar { padding: 13px 16px; }
+      .card-body { padding: 24px 20px 28px; }
+      .card-footer { padding: 12px 20px; }
+      .file-block { flex-direction: column; align-items: flex-start; gap: 12px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="brand">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 12l-10 5L2 12"/>
+        <path d="M22 7l-10 5L2 7l10-5 10 5z"/>
+        <path d="M22 17l-10 5L2 17"/>
+      </svg>
+      FolderHub
+    </div>
+
+    <div class="topbar-right">
+      <button type="button" id="theme-toggle" class="btn-icon" title="Toggle dark mode">
+        <svg class="icon-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <svg class="icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="page">
+
+    <!-- Back link -->
+    <div class="page-top">
+      <a href="/dashboard" class="back-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/>
+        </svg>
+        Back to Dashboard
+      </a>
+    </div>
+
+    <!-- Main card -->
+    <div class="card">
+
+      <div class="card-stripe"></div>
+
+      <div class="card-body">
+
+        <!-- Status row -->
+        <div class="status-row">
+          <div class="badge-ready">
+            <span class="badge-ready-dot"></span>
+            Transfer Ready
+          </div>
+          <div class="badge-qs">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+            QuickSend
+          </div>
+        </div>
+
+        <%
+          /* ── Resolve file icon from name ── */
+          var _ext = (quickSend.fileName || '').split('.').pop().toLowerCase();
+          var _icon = '📄'; var _iconClass = 'fi-default';
+
+          if (['jpg','jpeg','png','gif','webp','svg','avif'].includes(_ext)) {
+            _icon = '🖼️'; _iconClass = 'fi-image';
+          } else if (_ext === 'pdf') {
+            _icon = '📕'; _iconClass = 'fi-pdf';
+          } else if (['doc','docx'].includes(_ext)) {
+            _icon = '📘'; _iconClass = 'fi-word';
+          } else if (['xls','xlsx','csv'].includes(_ext)) {
+            _icon = '📊'; _iconClass = 'fi-sheet';
+          } else if (['zip','rar','tar','gz','7z'].includes(_ext)) {
+            _icon = '📦'; _iconClass = 'fi-zip';
+          } else if (['mp4','mov','avi','mkv','webm'].includes(_ext)) {
+            _icon = '🎥'; _iconClass = 'fi-video';
+          } else if (['mp3','wav','ogg','flac','aac'].includes(_ext)) {
+            _icon = '🎵'; _iconClass = 'fi-audio';
+          }
+        %>
+
+        <!-- File block -->
+        <div class="file-block">
+          <div class="file-icon-wrap <%= _iconClass %>"><%= _icon %></div>
+          <div class="file-details">
+            <div class="file-name"><%= quickSend.fileName %></div>
+            <div class="file-available">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              Available now
+            </div>
+          </div>
+        </div>
+
+        <!-- Shared note -->
+        <p class="shared-note">This file was shared using <strong>QuickSend</strong>. Choose how you'd like to access it below.</p>
+
+        <!-- Action buttons — URLs preserved exactly -->
+        <div class="actions">
+
+          <!-- Download File -->
+          <a
+            href="<%= quickSend.fileUrl %>?download=<%= encodeURIComponent(quickSend.fileName) %>"
+            class="btn btn-primary"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Download File
+          </a>
+
+          <!-- Open File -->
+          <a
+            href="<%= quickSend.fileUrl %>"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-outline"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+            Open in Browser
+          </a>
+
+        </div>
+
+        <!-- Security note -->
+        <div class="security-note">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          This transfer may expire automatically. Download the file now to keep a permanent copy.
+        </div>
+
+      </div>
+
+      <div class="card-footer">
+        Powered by <a href="/dashboard">FolderHub</a> · QuickSend
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var root = document.documentElement;
+      var isDark = root.getAttribute('data-theme') === 'dark';
+      if (isDark) {
+        root.removeAttribute('data-theme');
+        localStorage.setItem('theme', 'light');
+      } else {
+        root.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+      }
+    });
+  </script>
+
+</body>
+</html>

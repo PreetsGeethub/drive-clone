@@ -64,6 +64,9 @@ const createQuickSend = async (req, res) => {
 
 const qrUrl =
   `${baseUrl}/quick-send/${code}`;
+  console.log(qrUrl);
+
+
     const qrCode = await QRCode.toDataURL(qrUrl);
 
     // 8️⃣ Render success page
