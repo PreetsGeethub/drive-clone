@@ -1,4 +1,4 @@
-const {prisma} = require("../prismaClient");
+const { prisma } = require("../prismaClient");
 const { v4: uuidv4 } = require("uuid");
 
 const createShareLink = async (req, res) => {
@@ -31,7 +31,11 @@ const createShareLink = async (req, res) => {
     });
 
     // 5️⃣ Send link
-    const link = `http://localhost:3000/share/${uuid}`;
+    const baseUrl =
+      process.env.BASE_URL || "http://localhost:3000";
+
+    const link =
+      `${baseUrl}/share/${uuid}`;
 
     res.send(`Share Link: ${link}`);
 
@@ -42,39 +46,39 @@ const createShareLink = async (req, res) => {
 };
 
 const viewSharedFolder = async (req, res) => {
-    const { uuid } = req.params;
-  
-    try {
-      const share = await prisma.shareLink.findUnique({
-        where: { uuid },
-        include: {
-          folder: {
-            include: {
-              files: true
-            }
+  const { uuid } = req.params;
+
+  try {
+    const share = await prisma.shareLink.findUnique({
+      where: { uuid },
+      include: {
+        folder: {
+          include: {
+            files: true
           }
         }
-      });
-  
-      // 1️⃣ Check exists
-      if (!share) {
-        return res.send("Invalid link");
       }
-  
-      // 2️⃣ Check expiry
-      if (new Date() > share.expiresAt) {
-        return res.send("Link expired");
-      }
-  
-      // 3️⃣ Render view
-      res.render("sharedFolder", {
-        folder: share.folder
-      });
-  
-    } catch (error) {
-      console.error(error);
-      res.send("Error accessing shared folder");
+    });
+
+    // 1️⃣ Check exists
+    if (!share) {
+      return res.send("Invalid link");
     }
-  };
-  
-  module.exports = { createShareLink, viewSharedFolder };
+
+    // 2️⃣ Check expiry
+    if (new Date() > share.expiresAt) {
+      return res.send("Link expired");
+    }
+
+    // 3️⃣ Render view
+    res.render("sharedFolder", {
+      folder: share.folder
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.send("Error accessing shared folder");
+  }
+};
+
+module.exports = { createShareLink, viewSharedFolder };
