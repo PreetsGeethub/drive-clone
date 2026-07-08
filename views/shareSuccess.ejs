@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Folder Shared Successfully</title>
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      font-family: Arial, sans-serif;
+
+      background: #0f172a;
+      color: white;
+    }
+
+    .container {
+      width: 500px;
+
+      background: #1e293b;
+
+      padding: 40px;
+
+      border-radius: 18px;
+
+      text-align: center;
+
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      font-size: 32px;
+    }
+
+    p {
+      color: #cbd5e1;
+    }
+
+    .link-box {
+      margin-top: 25px;
+
+      background: #334155;
+
+      padding: 20px;
+
+      border-radius: 12px;
+    }
+
+    .link-box input {
+      width: 100%;
+
+      padding: 12px;
+
+      border: none;
+      border-radius: 8px;
+
+      background: #1e293b;
+      color: white;
+
+      box-sizing: border-box;
+    }
+
+    .btn {
+      margin-top: 15px;
+
+      padding: 12px 20px;
+
+      border: none;
+
+      border-radius: 8px;
+
+      background: #6366f1;
+
+      color: white;
+
+      cursor: pointer;
+
+      font-size: 15px;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+    }
+
+    .expiry {
+      margin-top: 20px;
+
+      color: #fbbf24;
+
+      font-size: 14px;
+
+      line-height: 1.6;
+    }
+
+    .open-link {
+      display: inline-block;
+
+      margin-top: 20px;
+
+      color: #818cf8;
+
+      text-decoration: none;
+
+      font-weight: bold;
+    }
+
+    .open-link:hover {
+      text-decoration: underline;
+    }
+
+    .home-link {
+      display: inline-block;
+
+      margin-top: 25px;
+
+      color: #94a3b8;
+
+      text-decoration: none;
+    }
+
+    .home-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>🔗 Folder Shared</h1>
+
+    <p>
+      Share this link with anyone to access the folder
+    </p>
+
+    <div class="link-box">
+
+      <input
+        id="shareLink"
+        type="text"
+        value="<%= link %>"
+        readonly
+      >
+
+      <button
+        class="btn"
+        onclick="copyLink()"
+      >
+        Copy Link
+      </button>
+
+    </div>
+
+    <div class="expiry">
+      ⏳ Expires in 24 Hours
+
+      <br>
+
+      <small>
+        Valid until:
+        <%= new Date(expiresAt).toLocaleString() %>
+      </small>
+    </div>
+
+    <a
+      class="open-link"
+      href="<%= link %>"
+      target="_blank"
+    >
+      Open Shared Folder
+    </a>
+
+    <br>
+
+    <a
+      class="home-link"
+      href="/dashboard"
+    >
+      Back to Dashboard
+    </a>
+
+  </div>
+
+  <script>
+    function copyLink() {
+      const input =
+        document.getElementById("shareLink");
+
+      navigator.clipboard.writeText(input.value);
+
+      alert("Link copied successfully!");
+    }
+  </script>
+
+</body>
+</html>

@@ -37,7 +37,10 @@ const createShareLink = async (req, res) => {
     const link =
       `${baseUrl}/share/${uuid}`;
 
-    res.send(`Share Link: ${link}`);
+      res.render("shareSuccess", {
+        link,
+        expiresAt,
+      });
 
   } catch (error) {
     console.error(error);
